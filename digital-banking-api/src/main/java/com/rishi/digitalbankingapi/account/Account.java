@@ -79,4 +79,31 @@ public class Account {
     void onUpdate() {
         updatedAt = Instant.now();
     }
+
+    public void credit(BigDecimal amount) {
+        requirePositive(amount);
+        requireActive();
+        this.balance = this.balance.add(amount);
+    }
+
+    public void debit(BigDecimal amount) {
+        requirePositive(amount);
+        requireActive();
+        if (this.balance.compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Insufficient funds in account " + accountNumber);
+        }
+        this.balance = this.balance.subtract(amount);
+    }
+
+    private void requireActive() {
+        if (status != AccountStatus.ACTIVE) {
+            throw new AccountNotActiveException("Account " + accountNumber + " is " + status);
+        }
+    }
+
+    private void requirePositive(BigDecimal amount) {
+        if (amount == null || amount.signum() <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+    }
 }

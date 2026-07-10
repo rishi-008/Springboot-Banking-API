@@ -1,8 +1,11 @@
 package com.rishi.digitalbankingapi.account;
 
-public class InsufficientFundsException extends RuntimeException {
+import com.rishi.digitalbankingapi.common.ApiException;
+import org.springframework.http.HttpStatus;
+
+public class InsufficientFundsException extends ApiException {
 
     public InsufficientFundsException(String message) {
-        super(message);
+        super(HttpStatus.CONFLICT, "INSUFFICIENT_FUNDS", message);
     }
 }

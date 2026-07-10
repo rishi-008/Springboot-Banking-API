@@ -57,43 +57,22 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountResponse deposit(Long id, BigDecimal amount) {
-        requirePositive(amount);
         Account account = findAccountOrThrow(id);
-        requireActive(account);
-        account.setBalance(account.getBalance().add(amount));
+        account.credit(amount);
         return AccountResponse.from(account);
     }
 
     @Override
     @Transactional
     public AccountResponse withdraw(Long id, BigDecimal amount) {
-        requirePositive(amount);
         Account account = findAccountOrThrow(id);
-        requireActive(account);
-        if (account.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException(
-                    "Insufficient funds in account " + account.getAccountNumber());
-        }
-        account.setBalance(account.getBalance().subtract(amount));
+        account.debit(amount);
         return AccountResponse.from(account);
     }
 
     private Account findAccountOrThrow(Long id) {
         return accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found: " + id));
-    }
-
-    private void requirePositive(BigDecimal amount) {
-        if (amount == null || amount.signum() <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero");
-        }
-    }
-
-    private void requireActive(Account account) {
-        if (account.getStatus() != AccountStatus.ACTIVE) {
-            throw new AccountNotActiveException(
-                    "Account " + account.getAccountNumber() + " is " + account.getStatus());
-        }
     }
 
     private String generateUniqueAccountNumber() {
