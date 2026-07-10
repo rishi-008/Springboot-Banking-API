@@ -1,5 +1,6 @@
 package com.rishi.digitalbankingapi.transfer.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -7,11 +8,11 @@ import java.math.BigDecimal;
 
 public record TransferRequest(
 
-        @NotNull(message = "Source account id is required")
-        Long fromAccountId,
+        @NotBlank(message = "Source account number is required")
+        String fromAccountNumber,
 
-        @NotNull(message = "Destination account id is required")
-        Long toAccountId,
+        @NotBlank(message = "Destination account number is required")
+        String toAccountNumber,
 
         @NotNull(message = "Amount is required")
         @Positive(message = "Amount must be greater than zero")

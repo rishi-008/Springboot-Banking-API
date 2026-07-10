@@ -35,8 +35,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public AccountResponse getAccount(Long id) {
-        return AccountResponse.from(findAccountOrThrow(id));
+    public AccountResponse getAccount(String accountNumber) {
+        return AccountResponse.from(findAccountOrThrow(accountNumber));
     }
 
     @Override
@@ -49,30 +49,30 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void closeAccount(Long id) {
-        Account account = findAccountOrThrow(id);
+    public void closeAccount(String accountNumber) {
+        Account account = findAccountOrThrow(accountNumber);
         account.setStatus(AccountStatus.CLOSED);
     }
 
     @Override
     @Transactional
-    public AccountResponse deposit(Long id, BigDecimal amount) {
-        Account account = findAccountOrThrow(id);
+    public AccountResponse deposit(String accountNumber, BigDecimal amount) {
+        Account account = findAccountOrThrow(accountNumber);
         account.credit(amount);
         return AccountResponse.from(account);
     }
 
     @Override
     @Transactional
-    public AccountResponse withdraw(Long id, BigDecimal amount) {
-        Account account = findAccountOrThrow(id);
+    public AccountResponse withdraw(String accountNumber, BigDecimal amount) {
+        Account account = findAccountOrThrow(accountNumber);
         account.debit(amount);
         return AccountResponse.from(account);
     }
 
-    private Account findAccountOrThrow(Long id) {
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + id));
+    private Account findAccountOrThrow(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountNumber));
     }
 
     private String generateUniqueAccountNumber() {

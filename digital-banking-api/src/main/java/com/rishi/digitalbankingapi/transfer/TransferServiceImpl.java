@@ -19,24 +19,24 @@ public class TransferServiceImpl implements TransferService {
     @Override
     @Transactional
     public TransferResponse transfer(TransferRequest request) {
-        Long fromId = request.fromAccountId();
-        Long toId = request.toAccountId();
+        String fromNumber = request.fromAccountNumber();
+        String toNumber = request.toAccountNumber();
 
-        if (fromId.equals(toId)) {
+        if (fromNumber.equals(toNumber)) {
             throw new InvalidTransferException("Cannot transfer to the same account");
         }
 
-        // Always lock in ascending id order, regardless of transfer direction,
+        // Always lock in a consistent order, regardless of transfer direction,
         // so two concurrent transfers moving money in opposite directions
         // (A->B and B->A) can't deadlock waiting on each other's row lock.
-        Long firstLockId = Math.min(fromId, toId);
-        Long secondLockId = Math.max(fromId, toId);
+        String firstLockNumber = fromNumber.compareTo(toNumber) < 0 ? fromNumber : toNumber;
+        String secondLockNumber = fromNumber.compareTo(toNumber) < 0 ? toNumber : fromNumber;
 
-        Account first = findForUpdateOrThrow(firstLockId);
-        Account second = findForUpdateOrThrow(secondLockId);
+        Account first = findForUpdateOrThrow(firstLockNumber);
+        Account second = findForUpdateOrThrow(secondLockNumber);
 
-        Account from = firstLockId.equals(fromId) ? first : second;
-        Account to = firstLockId.equals(fromId) ? second : first;
+        Account from = firstLockNumber.equals(fromNumber) ? first : second;
+        Account to = firstLockNumber.equals(fromNumber) ? second : first;
 
         from.debit(request.amount());
         to.credit(request.amount());
@@ -48,8 +48,8 @@ public class TransferServiceImpl implements TransferService {
         );
     }
 
-    private Account findForUpdateOrThrow(Long id) {
-        return accountRepository.findByIdForUpdate(id)
-                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + id));
+    private Account findForUpdateOrThrow(String accountNumber) {
+        return accountRepository.findByAccountNumberForUpdate(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountNumber));
     }
 }

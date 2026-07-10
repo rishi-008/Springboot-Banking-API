@@ -18,6 +18,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     // for the duration of the transaction rather than fail-and-retry like
     // the optimistic @Version check used for single-account deposit/withdraw.
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select a from Account a where a.id = :id")
-    Optional<Account> findByIdForUpdate(@Param("id") Long id);
+    @Query("select a from Account a where a.accountNumber = :accountNumber")
+    Optional<Account> findByAccountNumberForUpdate(@Param("accountNumber") String accountNumber);
 }

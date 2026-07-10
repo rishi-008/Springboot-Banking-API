@@ -27,12 +27,12 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<AccountResponse> createAccount(@Valid @RequestBody CreateAccountRequest request) {
         AccountResponse response = accountService.createAccount(request);
-        return ResponseEntity.created(URI.create("/api/accounts/" + response.id())).body(response);
+        return ResponseEntity.created(URI.create("/api/accounts/" + response.accountNumber())).body(response);
     }
 
-    @GetMapping("/{id}")
-    public AccountResponse getAccount(@PathVariable Long id) {
-        return accountService.getAccount(id);
+    @GetMapping("/{accountNumber}")
+    public AccountResponse getAccount(@PathVariable String accountNumber) {
+        return accountService.getAccount(accountNumber);
     }
 
     @GetMapping
@@ -40,19 +40,19 @@ public class AccountController {
         return accountService.getAllAccounts();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> closeAccount(@PathVariable Long id) {
-        accountService.closeAccount(id);
+    @DeleteMapping("/{accountNumber}")
+    public ResponseEntity<Void> closeAccount(@PathVariable String accountNumber) {
+        accountService.closeAccount(accountNumber);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/deposit")
-    public AccountResponse deposit(@PathVariable Long id, @Valid @RequestBody AmountRequest request) {
-        return accountService.deposit(id, request.amount());
+    @PostMapping("/{accountNumber}/deposit")
+    public AccountResponse deposit(@PathVariable String accountNumber, @Valid @RequestBody AmountRequest request) {
+        return accountService.deposit(accountNumber, request.amount());
     }
 
-    @PostMapping("/{id}/withdraw")
-    public AccountResponse withdraw(@PathVariable Long id, @Valid @RequestBody AmountRequest request) {
-        return accountService.withdraw(id, request.amount());
+    @PostMapping("/{accountNumber}/withdraw")
+    public AccountResponse withdraw(@PathVariable String accountNumber, @Valid @RequestBody AmountRequest request) {
+        return accountService.withdraw(accountNumber, request.amount());
     }
 }

@@ -10,13 +10,13 @@ public interface AccountService {
 
     AccountResponse createAccount(CreateAccountRequest request);
 
-    AccountResponse getAccount(Long id);
+    AccountResponse getAccount(String accountNumber);
 
     List<AccountResponse> getAllAccounts();
 
-    void closeAccount(Long id);
+    void closeAccount(String accountNumber);
 
-    AccountResponse deposit(Long id, BigDecimal amount);
+    AccountResponse deposit(String accountNumber, BigDecimal amount);
 
-    AccountResponse withdraw(Long id, BigDecimal amount);
+    AccountResponse withdraw(String accountNumber, BigDecimal amount);
 }
