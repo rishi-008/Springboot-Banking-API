@@ -1,6 +1,7 @@
 package com.rishi.digitalbankingapi.auth;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,8 +43,14 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, String expectedUsername) {
-        Claims claims = extractAllClaims(token);
-        return claims.getSubject().equals(expectedUsername) && claims.getExpiration().after(new Date());
+        try {
+            Claims claims = extractAllClaims(token);
+            return claims.getSubject().equals(expectedUsername) && claims.getExpiration().after(new Date());
+        } catch (JwtException e) {
+            // Covers expired, malformed, and signature-mismatched tokens: this
+            // method's contract is a boolean check, not a throwing one.
+            return false;
+        }
     }
 
     private Claims extractAllClaims(String token) {
