@@ -71,15 +71,16 @@ Integration tests spin up a real PostgreSQL container via Testcontainers automat
 ## Project structure
 
 ```
-account/    Account entity, repository, service, controller, DTOs
-transfer/   Transfer service, controller, DTOs
-auth/       User entity, JWT issuance/validation, auth endpoints
-common/     Shared API error model, exception handling, OpenAPI config
+src/main/java/com/rishi/digitalbankingapi/
+  account/    Account entity, repository, service, controller, DTOs
+  transfer/   Transfer service, controller, DTOs
+  auth/       User entity, JWT issuance/validation, auth endpoints
+  common/     Shared API error model, exception handling, OpenAPI config
 ```
 
 ## Configuration
 
-Key environment variables (all have local-dev defaults in `application.properties`):
+Key environment variables (all have local-dev defaults in `src/main/resources/application.properties`):
 
 | Variable | Purpose |
 |---|---|
